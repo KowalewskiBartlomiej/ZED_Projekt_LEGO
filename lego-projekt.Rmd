@@ -8,6 +8,12 @@ output:
     toc_float: yes
     theme: paper
     number_sections: yes
+    
+
+knit: (function(inputFile, encoding) { 
+          rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file='index.html') })
 ---
 
 ```{r ustawienia, include=F}
