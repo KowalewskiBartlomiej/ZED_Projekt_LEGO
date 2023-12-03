@@ -1,0 +1,76 @@
+---
+title: "ZED - Projekt 1 (Analiza danych dotyczących LEGO)"
+author: "Bartłomiej Kowalewski, 145204"
+date: "`r Sys.Date()`"
+output: 
+  html_document: 
+    toc: yes
+    toc_float: yes
+    theme: paper
+    number_sections: yes
+---
+
+```{r ustawienia, include=F}
+knitr::opts_chunk$set(echo=F, warning=F, message=F)
+```
+
+# Podsumowanie analizy
+
+# Wykorzystane biblioteki
+
+Wykorzystane biblioteki:
+
+- knitr,
+- dplyr,
+- EDAWR
+- skimr,
+- DT.
+
+```{r ladowanie_bibliotek, echo=T}
+library(knitr)
+library(dplyr)
+library(EDAWR)
+library(skimr)
+library(DT)
+```
+
+```{r}
+prettyTable <- function(table_df, round_digits=2) {
+    DT::datatable(table_df, style="bootstrap", filter = "top", rownames = FALSE, extensions = "Buttons", options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', 'excel', 'pdf', 'print'))) %>% formatRound(names(dplyr::select_if(table_df, is.numeric)), round_digits)
+}
+```
+
+
+# Opis zbioru danych
+
+```{r wczytanie_danych, echo=F, cache=T}
+```
+
+Wykorzystany zbiór danych posiada 3800 rekordów zawierających informacje o liczbie zachorowań na gruźlicę w poszczególnych krajach w latach 1995-2013.
+
+Atrybuty w zbiorze danych:
+
+- "country" - kraj,
+- "year" - rok,
+- "sex" - płeć,
+- "child" - liczba przypadków odnotowanych wśród osób w wieku 0-14 lat,
+- "adult" - liczba przypadków odnotowanych wśród osób w wieku 15-64 lata,
+- "elderly" - liczba przypadków odnotowanych wśród osób w wieku powyżej 64 lat.
+
+# Kod - wczytanie danych
+
+# Kod - brakujące dane
+
+# Kod - przetwarzanie danych 
+
+# Rozmiar zbioru i jego podstawowe statystyki
+
+# Szczegółowa analiza wartości atrybutów w zbiorze
+
+# Korelacja między zmiennymi (wykresy itp.)
+
+# Interaktywne wykresy i animacje
+
+# Podsumowanie najważniejszych trendów w rozwoju LEGO na przestrzeni ostatnich lat
+
+# Predykcja dalszych cech zestawów LEGO
