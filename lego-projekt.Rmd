@@ -32,6 +32,8 @@ library(dplyr)
 library(ggplot2)
 library(skimr)
 library(plotly)
+library(caret)
+library(ggeasy)
 ```
 
 ```{r setup_ladnych_tabel}
@@ -98,6 +100,7 @@ Atrybuty w tej tabeli to:
 * **color_id** - numer koloru
 * **quantity** - ilość
 * **is_spare** - zmienna typu bool, określająca czy klocek jest w zapasie
+* **img_url** - adres url zdjęcia części
 
 ```{r opis_danych_inventory_parts}
 kable(summary(inventory_parts), align = "l", caption = "Podstawowe statystyki danych z tabeli")
@@ -115,6 +118,7 @@ Atrybuty w tej tabeli to:
 * **part_num** - oznaczenie części
 * **name** - nazwa części
 * **part_cat_id** - id kategorii części
+* **part_material** - materiał, z którego wykonano część
 
 ```{r opis_danych_parts}
 kable(summary(parts), align = "l", caption = "Podstawowe statystyki danych z tabeli")
@@ -165,6 +169,7 @@ Atrybuty w tej tabeli to:
 * **element_id**
 * **part_num** - oznaczenie części, w której skład wchodzi dany element
 * **color_id** - numer koloru
+* **design_id**
 
 ```{r opis_danych_elements}
 kable(summary(elements), align = "l", caption = "Podstawowe statystyki danych z tabeli")
@@ -217,6 +222,7 @@ Atrybuty w tej tabeli to:
 * **fig_num** - numer figurki
 * **name** - nazwa figurki
 * **num_parts** - liczba części
+* **img_url** - adres url zdjęcia figurki
 
 ```{r opis_danych_minifigs}
 kable(summary(minifigs), align = "l", caption = "Podstawowe statystyki danych z tabeli")
@@ -253,6 +259,7 @@ Atrybuty w tej tabeli to:
 * **year** - rok, z którego pochodzi zestaw
 * **theme_id** - numer kategorii zestawu
 * **num_parts** - liczba części
+* **img_url** - adres url zdjęcia zestawu
 
 ```{r opis_danych_sets}
 kable(summary(sets), align = "l", caption = "Podstawowe statystyki danych z tabeli")
@@ -277,18 +284,95 @@ kable(head(themes), align = "l", caption = "Kilka pierwszych elementów z tabeli
 skim(themes)
 ```
 
-# Kod - brakujące dane
+# Analiza danych
+
+W tej sekcji dokonano analizy wczytanych danych w celu wykrycia ciekawych zależności oraz znalezienia pojawiających się na przestrzeni lat trendów dotyczących klocków LEGO.
+
+## Ogólna analiza
+
+### Najpopularniejsze figurki w zestawach
+
+Poniższy wykres przedstawia 10 najczęściej występujących figurek w zestawach LEGO.
+
+```{r najpopularniejsze_figurki, echo=T}
+inventory_minifigs %>%
+  merge(inventories, by.x="inventory_id", by.y="id") %>%
+  merge(minifigs, by="fig_num") %>%
+  group_by(fig_num, name) %>%
+  summarize(fig_count = n()) %>%
+  arrange(desc(fig_count)) %>%
+  mutate(name = strtrim(name, 20)) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(name, fig_count), y = fig_count)) + 
+           geom_bar(stat="identity", fill="#00abff") +
+           coord_flip() + 
+           ggtitle("10 najpopularniejszych figurek") +
+           labs(x = "Figurka", y = "Liczba zestawów, w których występuje figurka") +
+           theme_bw() + 
+           easy_center_title() -> pop_fig
+  
+ggplotly(pop_fig)
+```
+
+Z wykresu wynika, że najbardziej popularną figurką jest figurka szkieleta, która występuje w 43 zestawach.
+
+### Rozkład materiałów, z których wykonano części
+
+Poniżej znajduje się wykres kołowy oraz tabela podsumowująca procentowy rozkład materiałów, z których wykonano części LEGO. Niemalże wszystkie z nich (aż około 98,88%) zostały wykonane z plastiku. Następnym najczęściej używanym materiałem jest guma (około 0.71%).
+
+```{r rozklad_materiałow, echo=T}
+parts %>%
+  merge(inventory_parts, by="part_num") %>%
+  group_by(part_material) %>%
+  summarize(material_count = n()) %>%
+  arrange(desc(material_count)) %>%
+  mutate(prop = material_count / sum(material_count)) -> parts_by_material
+
+parts_by_material %>%
+  mutate(ypos = cumsum(prop) - 0.5 * prop) %>%
+  ggplot(aes(x="", y=prop, fill=part_material)) +
+  geom_bar(stat="identity", width=1, color="white") +
+  coord_polar("y", start=0) +
+  theme_void()
+
+parts_by_material %>%
+  mutate(prop = formattable::percent(prop)) %>%
+  kable(col.names = c("Materiał", "Liczba części", "Procent"))
+```
+
+### Najbardziej popularne kategorie zestawów
+
+Poniżej znajduje się wykres przedstawiający 10 kategorii (motywy), w których jest najwięcej zestawów.
+
+```{r najpopularniejsze_kategorie, echo=T}
+themes %>%
+  rename(theme_name = name) %>%
+  merge(sets, by.x="id", by.y="theme_id") %>%
+  group_by(theme_name) %>%
+  summarize(theme_count = n()) %>%
+  arrange(desc(theme_count)) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(theme_name, theme_count), y = theme_count)) + 
+           geom_bar(stat="identity", fill="#00abff") +
+           coord_flip() + 
+           ggtitle("10 najpopularniejszych kategorii zestawów") +
+           labs(x = "Kategoria zestawu", y = "Liczba zestawów w danej kategorii ") +
+           theme_bw() + 
+           easy_center_title() -> pop_themes
+  
+ggplotly(pop_themes)
+```
+
+Z powyższego wykresu wynika, że najpopularniejszą kategorią (motywem) jest Books, gdyż w tej kategorii są 973 zestawy.
+
+## Analiza trendów
+
+# Korelacje między zmiennymi
+
+# Predykcja dalszych cech zestawów LEGO
 
 # Kod - przetwarzanie danych 
 
-# Rozmiar zbioru i jego podstawowe statystyki
-
 # Szczegółowa analiza wartości atrybutów w zbiorze
 
-# Korelacja między zmiennymi (wykresy itp.)
-
 # Interaktywne wykresy i animacje
-
-# Podsumowanie najważniejszych trendów w rozwoju LEGO na przestrzeni ostatnich lat
-
-# Predykcja dalszych cech zestawów LEGO
