@@ -11,9 +11,9 @@
 
 <meta name="author" content="Bartłomiej Kowalewski, 145204" />
 
-<meta name="date" content="2023-12-03" />
+<meta name="date" content="2023-12-05" />
 
-<title>ZED - Projekt 1 (Analiza danych dotyczących LEGO)</title>
+<title>ZED - Projekt 1  Analiza danych dotyczących LEGO</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1503,10 +1503,10 @@ border-radius: 0px;
 
 
 
-<h1 class="title toc-ignore">ZED - Projekt 1 (Analiza danych dotyczących
-LEGO)</h1>
+<h1 class="title toc-ignore">ZED - Projekt 1 <br>Analiza danych
+dotyczących LEGO</h1>
 <h4 class="author">Bartłomiej Kowalewski, 145204</h4>
-<h4 class="date">2023-12-03</h4>
+<h4 class="date">2023-12-05</h4>
 
 </div>
 
@@ -1518,41 +1518,3162 @@ analizy</h1>
 <div id="wykorzystane-biblioteki" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Wykorzystane
 biblioteki</h1>
-<p>Wykorzystane biblioteki:</p>
-<ul>
-<li>knitr,</li>
-<li>dplyr,</li>
-<li>EDAWR</li>
-<li>skimr,</li>
-<li>DT.</li>
-</ul>
+<p>Do stworzenia raportu wykorzystano następujące biblioteki:</p>
 <pre class="r"><code>library(knitr)
 library(dplyr)
-library(EDAWR)
+library(ggplot2)
 library(skimr)
-library(DT)</code></pre>
+library(plotly)</code></pre>
+<p>W celu uzyskania powtarzalności rezultatów ustawiono ziarno dla
+generatora liczb pseudolosowych.</p>
+<pre class="r"><code>set.seed(23)</code></pre>
 </div>
-<div id="opis-zbioru-danych" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Opis zbioru danych</h1>
-<p>Wykorzystany zbiór danych posiada 3800 rekordów zawierających
-informacje o liczbie zachorowań na gruźlicę w poszczególnych krajach w
-latach 1995-2013.</p>
-<p>Atrybuty w zbiorze danych:</p>
+<div id="wczytanie-danych" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Wczytanie danych</h1>
+<p>Poniżej znajduje się kod odpowiedzialny za wczytanie danych z plików
+z 12 tabel.</p>
+<pre class="r"><code>inventories &lt;- read.csv(&quot;rebrickable/inventories.csv&quot;)
+inventory_parts &lt;- read.csv(&quot;rebrickable/inventory_parts.csv&quot;)
+parts &lt;- read.csv(&quot;rebrickable/parts.csv&quot;)
+part_categories &lt;- read.csv(&quot;rebrickable/part_categories.csv&quot;)
+part_relationships &lt;- read.csv(&quot;rebrickable/part_relationships.csv&quot;)
+elements &lt;- read.csv(&quot;rebrickable/elements.csv&quot;)
+colors &lt;- read.csv(&quot;rebrickable/colors.csv&quot;)
+inventory_minifigs &lt;- read.csv(&quot;rebrickable/inventory_minifigs.csv&quot;)
+minifigs &lt;- read.csv(&quot;rebrickable/minifigs.csv&quot;)
+inventory_sets &lt;- read.csv(&quot;rebrickable/inventory_sets.csv&quot;)
+sets &lt;- read.csv(&quot;rebrickable/sets.csv&quot;)
+themes &lt;- read.csv(&quot;rebrickable/themes.csv&quot;)</code></pre>
+</div>
+<div id="opis-zbioru-danych" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Opis zbioru danych</h1>
+<p>Cały zbiór danych dotyczący klocków LEGO składa się z 12 tabel.
+Poniżej znajdują się sekcje zawierające opisy każdej z nich,
+wyświetlające informacje o ich rozmiarze oraz podstawowe statystyki.</p>
+<div id="inventories" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Inventories</h2>
+<p>Jest to tabela nadrzędna łącząca części i figurki z zestawami LEGO.
+<br> Tabela zawiera <strong>37265</strong> rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
 <ul>
-<li>“country” - kraj,</li>
-<li>“year” - rok,</li>
-<li>“sex” - płeć,</li>
-<li>“child” - liczba przypadków odnotowanych wśród osób w wieku 0-14
-lat,</li>
-<li>“adult” - liczba przypadków odnotowanych wśród osób w wieku 15-64
-lata,</li>
-<li>“elderly” - liczba przypadków odnotowanych wśród osób w wieku
-powyżej 64 lat.</li>
+<li><strong>id</strong></li>
+<li><strong>version</strong> - numer wersji</li>
+<li><strong>set_num</strong> - numer zestawu</li>
 </ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">id</th>
+<th align="left">version</th>
+<th align="left">set_num</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : 1</td>
+<td align="left">Min. : 1.000</td>
+<td align="left">Length:37265</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.: 14424</td>
+<td align="left">1st Qu.: 1.000</td>
+<td align="left">Class :character</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median : 54379</td>
+<td align="left">Median : 1.000</td>
+<td align="left">Mode :character</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean : 61104</td>
+<td align="left">Mean : 1.091</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.: 88842</td>
+<td align="left">3rd Qu.: 1.000</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :194312</td>
+<td align="left">Max. :16.000</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left">id</th>
+<th align="left">version</th>
+<th align="left">set_num</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">7922-1</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">1</td>
+<td align="left">3931-1</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">1</td>
+<td align="left">6942-1</td>
+</tr>
+<tr class="even">
+<td align="left">15</td>
+<td align="left">1</td>
+<td align="left">5158-1</td>
+</tr>
+<tr class="odd">
+<td align="left">16</td>
+<td align="left">1</td>
+<td align="left">903-1</td>
+</tr>
+<tr class="even">
+<td align="left">17</td>
+<td align="left">1</td>
+<td align="left">850950-1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">inventories</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">37265</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">set_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">35644</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="15%" />
+<col width="11%" />
+<col width="15%" />
+<col width="10%" />
+<col width="10%" />
+<col width="3%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="7%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">61103.60</td>
+<td align="right">51380.10</td>
+<td align="right">1</td>
+<td align="right">14424</td>
+<td align="right">54379</td>
+<td align="right">88842</td>
+<td align="right">194312</td>
+<td align="left">▇▆▂▂▂</td>
+</tr>
+<tr class="even">
+<td align="left">version</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.09</td>
+<td align="right">0.58</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">16</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="kod---wczytanie-danych" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Kod - wczytanie
-danych</h1>
+<div id="inventory-parts" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Inventory Parts</h2>
+<p>W tej tabeli zostały zawarte informacje o zapasach (nakładach) części
+LEGO. <br> Tabela zawiera <strong>1180987</strong> rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>inventory_id</strong></li>
+<li><strong>part_num</strong> - oznaczenie części</li>
+<li><strong>color_id</strong> - numer koloru</li>
+<li><strong>quantity</strong> - ilość</li>
+<li><strong>is_spare</strong> - zmienna typu bool, określająca czy
+klocek jest w zapasie</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<colgroup>
+<col width="3%" />
+<col width="15%" />
+<col width="17%" />
+<col width="15%" />
+<col width="16%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">inventory_id</th>
+<th align="left">part_num</th>
+<th align="left">color_id</th>
+<th align="left">quantity</th>
+<th align="left">is_spare</th>
+<th align="left">img_url</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : 1</td>
+<td align="left">Length:1180987</td>
+<td align="left">Min. : -1.0</td>
+<td align="left">Min. : 1.00</td>
+<td align="left">Length:1180987</td>
+<td align="left">Length:1180987</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.: 9404</td>
+<td align="left">Class :character</td>
+<td align="left">1st Qu.: 4.0</td>
+<td align="left">1st Qu.: 1.00</td>
+<td align="left">Class :character</td>
+<td align="left">Class :character</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median : 22838</td>
+<td align="left">Mode :character</td>
+<td align="left">Median : 15.0</td>
+<td align="left">Median : 2.00</td>
+<td align="left">Mode :character</td>
+<td align="left">Mode :character</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean : 50849</td>
+<td align="left">NA</td>
+<td align="left">Mean : 131.8</td>
+<td align="left">Mean : 3.37</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.: 87088</td>
+<td align="left">NA</td>
+<td align="left">3rd Qu.: 71.0</td>
+<td align="left">3rd Qu.: 4.00</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :194312</td>
+<td align="left">NA</td>
+<td align="left">Max. :9999.0</td>
+<td align="left">Max. :3064.00</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<colgroup>
+<col width="8%" />
+<col width="9%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="64%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">inventory_id</th>
+<th align="left">part_num</th>
+<th align="left">color_id</th>
+<th align="left">quantity</th>
+<th align="left">is_spare</th>
+<th align="left">img_url</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">48379c01</td>
+<td align="left">72</td>
+<td align="left">1</td>
+<td align="left">f</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/parts/photos/1/48379c01-1-e7daa845-2671-4737-8642-3b1574308155.jpg" class="uri">https://cdn.rebrickable.com/media/parts/photos/1/48379c01-1-e7daa845-2671-4737-8642-3b1574308155.jpg</a></td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">48395</td>
+<td align="left">7</td>
+<td align="left">1</td>
+<td align="left">f</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/parts/photos/7/48395-7-b9152acf-2fa5-4836-a04d-5b7fd39c2406.jpg" class="uri">https://cdn.rebrickable.com/media/parts/photos/7/48395-7-b9152acf-2fa5-4836-a04d-5b7fd39c2406.jpg</a></td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">stickerupn0077</td>
+<td align="left">9999</td>
+<td align="left">1</td>
+<td align="left">f</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">1</td>
+<td align="left">upn0342</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">f</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">upn0350</td>
+<td align="left">25</td>
+<td align="left">1</td>
+<td align="left">f</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">2343</td>
+<td align="left">47</td>
+<td align="left">1</td>
+<td align="left">f</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/parts/elements/3000240.jpg" class="uri">https://cdn.rebrickable.com/media/parts/elements/3000240.jpg</a></td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">inventory_parts</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">1180987</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">6</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">part_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">51051</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">is_spare</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">img_url</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">117</td>
+<td align="right">8180</td>
+<td align="right">74266</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="15%" />
+<col width="11%" />
+<col width="15%" />
+<col width="10%" />
+<col width="10%" />
+<col width="3%" />
+<col width="5%" />
+<col width="6%" />
+<col width="6%" />
+<col width="7%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">inventory_id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">50849.46</td>
+<td align="right">55136.94</td>
+<td align="right">1</td>
+<td align="right">9404</td>
+<td align="right">22838</td>
+<td align="right">87088</td>
+<td align="right">194312</td>
+<td align="left">▇▂▁▂▁</td>
+</tr>
+<tr class="even">
+<td align="left">color_id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">131.78</td>
+<td align="right">862.38</td>
+<td align="right">-1</td>
+<td align="right">4</td>
+<td align="right">15</td>
+<td align="right">71</td>
+<td align="right">9999</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">quantity</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3.37</td>
+<td align="right">9.95</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">3064</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="parts" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Parts</h2>
+<p>Tabela <strong>parts</strong> zawiera informacje o częściach LEGO,
+które mogą składać się z kilku elementów. <br> Tabela zawiera
+<strong>52615</strong> rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>part_num</strong> - oznaczenie części</li>
+<li><strong>name</strong> - nazwa części</li>
+<li><strong>part_cat_id</strong> - id kategorii części</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<colgroup>
+<col width="4%" />
+<col width="25%" />
+<col width="25%" />
+<col width="20%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">part_num</th>
+<th align="left">name</th>
+<th align="left">part_cat_id</th>
+<th align="left">part_material</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Length:52615</td>
+<td align="left">Length:52615</td>
+<td align="left">Min. : 1.00</td>
+<td align="left">Length:52615</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Class :character</td>
+<td align="left">Class :character</td>
+<td align="left">1st Qu.:17.00</td>
+<td align="left">Class :character</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Mode :character</td>
+<td align="left">Mode :character</td>
+<td align="left">Median :41.00</td>
+<td align="left">Mode :character</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Mean :38.91</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">3rd Qu.:60.00</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Max. :68.00</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<colgroup>
+<col width="11%" />
+<col width="55%" />
+<col width="15%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">part_num</th>
+<th align="left">name</th>
+<th align="left">part_cat_id</th>
+<th align="left">part_material</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">003381</td>
+<td align="left">Sticker Sheet for Set 663-1</td>
+<td align="left">58</td>
+<td align="left">Plastic</td>
+</tr>
+<tr class="even">
+<td align="left">003383</td>
+<td align="left">Sticker Sheet for Sets 618-1, 628-2</td>
+<td align="left">58</td>
+<td align="left">Plastic</td>
+</tr>
+<tr class="odd">
+<td align="left">003402</td>
+<td align="left">Sticker Sheet for Sets 310-3, 311-1, 312-3</td>
+<td align="left">58</td>
+<td align="left">Plastic</td>
+</tr>
+<tr class="even">
+<td align="left">003429</td>
+<td align="left">Sticker Sheet for Set 1550-1</td>
+<td align="left">58</td>
+<td align="left">Plastic</td>
+</tr>
+<tr class="odd">
+<td align="left">003432</td>
+<td align="left">Sticker Sheet for Sets 357-1, 355-1, 940-1</td>
+<td align="left">58</td>
+<td align="left">Plastic</td>
+</tr>
+<tr class="even">
+<td align="left">003434</td>
+<td align="left">Sticker Sheet for Set 575-2, 653-1, 460-1</td>
+<td align="left">58</td>
+<td align="left">Plastic</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">parts</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">52615</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">4</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">part_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">52615</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">name</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">222</td>
+<td align="right">0</td>
+<td align="right">52103</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">part_material</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">16</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="18%" />
+<col width="13%" />
+<col width="18%" />
+<col width="7%" />
+<col width="7%" />
+<col width="3%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">part_cat_id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">38.91</td>
+<td align="right">22.08</td>
+<td align="right">1</td>
+<td align="right">17</td>
+<td align="right">41</td>
+<td align="right">60</td>
+<td align="right">68</td>
+<td align="left">▃▃▂▁▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="part-categories" class="section level2" number="4.4">
+<h2><span class="header-section-number">4.4</span> Part Categories</h2>
+<p>Tabela <strong>part_categories</strong> zawiera informacje o
+kategoriach części LEGO. <br> Tabela zawiera <strong>66</strong>
+rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>id</strong></li>
+<li><strong>name</strong> - nazwa kategorii części</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : 1.00</td>
+<td align="left">Length:66</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.:19.25</td>
+<td align="left">Class :character</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median :35.50</td>
+<td align="left">Mode :character</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean :35.36</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.:51.75</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :68.00</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left">id</th>
+<th align="left">name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">Baseplates</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">Bricks Sloped</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">Duplo, Quatro and Primo</td>
+</tr>
+<tr class="even">
+<td align="left">5</td>
+<td align="left">Bricks Special</td>
+</tr>
+<tr class="odd">
+<td align="left">6</td>
+<td align="left">Bricks Wedged</td>
+</tr>
+<tr class="even">
+<td align="left">7</td>
+<td align="left">Containers</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">part_categories</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">66</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">name</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">44</td>
+<td align="right">0</td>
+<td align="right">66</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="17%" />
+<col width="12%" />
+<col width="17%" />
+<col width="7%" />
+<col width="7%" />
+<col width="3%" />
+<col width="7%" />
+<col width="6%" />
+<col width="7%" />
+<col width="6%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">35.36</td>
+<td align="right">19.41</td>
+<td align="right">1</td>
+<td align="right">19.25</td>
+<td align="right">35.5</td>
+<td align="right">51.75</td>
+<td align="right">68</td>
+<td align="left">▇▇▇▇▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="part-relationships" class="section level2" number="4.5">
+<h2><span class="header-section-number">4.5</span> Part
+Relationships</h2>
+<p>W tej tabeli zostały zawarte informacje o relacjach między
+poszczególnymi częściami. <br> Tabela zawiera <strong>29977</strong>
+rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>rel_type</strong> - oznaczenie relacji</li>
+<li><strong>child_part_num</strong> - oznaczenie części “dziecka”</li>
+<li><strong>parent_part_num</strong> - oznaczenie części “rodzica”</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">rel_type</th>
+<th align="left">child_part_num</th>
+<th align="left">parent_part_num</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Length:29977</td>
+<td align="left">Length:29977</td>
+<td align="left">Length:29977</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Class :character</td>
+<td align="left">Class :character</td>
+<td align="left">Class :character</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Mode :character</td>
+<td align="left">Mode :character</td>
+<td align="left">Mode :character</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left">rel_type</th>
+<th align="left">child_part_num</th>
+<th align="left">parent_part_num</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">P</td>
+<td align="left">3626cpr3662</td>
+<td align="left">3626c</td>
+</tr>
+<tr class="even">
+<td align="left">P</td>
+<td align="left">87079pr9974</td>
+<td align="left">87079</td>
+</tr>
+<tr class="odd">
+<td align="left">P</td>
+<td align="left">3960pr9971</td>
+<td align="left">3960</td>
+</tr>
+<tr class="even">
+<td align="left">R</td>
+<td align="left">98653pr0003</td>
+<td align="left">98086pr0003</td>
+</tr>
+<tr class="odd">
+<td align="left">R</td>
+<td align="left">98653pr0003</td>
+<td align="left">98088pat0003</td>
+</tr>
+<tr class="even">
+<td align="left">R</td>
+<td align="left">98653pr0003</td>
+<td align="left">98089pat0003</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">part_relationships</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">29977</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="21%" />
+<col width="13%" />
+<col width="18%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">rel_type</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">child_part_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">27139</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">parent_part_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">4725</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="elements" class="section level2" number="4.6">
+<h2><span class="header-section-number">4.6</span> Elements</h2>
+<p>W tabeli <strong>elements</strong> znajdują się informacje o
+pojedynczych klockach LEGO. <br> Tabela zawiera <strong>84138</strong>
+rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>element_id</strong></li>
+<li><strong>part_num</strong> - oznaczenie części, w której skład
+wchodzi dany element</li>
+<li><strong>color_id</strong> - numer koloru</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<colgroup>
+<col width="4%" />
+<col width="25%" />
+<col width="25%" />
+<col width="22%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">element_id</th>
+<th align="left">part_num</th>
+<th align="left">color_id</th>
+<th align="left">design_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : 9327</td>
+<td align="left">Length:84138</td>
+<td align="left">Min. : -1.0</td>
+<td align="left">Min. : 1001</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.: 4259774</td>
+<td align="left">Class :character</td>
+<td align="left">1st Qu.: 8.0</td>
+<td align="left">1st Qu.: 18454</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median : 6057754</td>
+<td align="left">Mode :character</td>
+<td align="left">Median : 28.0</td>
+<td align="left">Median : 41748</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean : 5222065</td>
+<td align="left">NA</td>
+<td align="left">Mean : 539.7</td>
+<td align="left">Mean : 45570</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.: 6262024</td>
+<td align="left">NA</td>
+<td align="left">3rd Qu.: 135.0</td>
+<td align="left">3rd Qu.: 75474</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :61532443</td>
+<td align="left">NA</td>
+<td align="left">Max. :9999.0</td>
+<td align="left">Max. :107520</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA’s :23682</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left">element_id</th>
+<th align="left">part_num</th>
+<th align="left">color_id</th>
+<th align="left">design_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">6443403</td>
+<td align="left">2277c01pr0009</td>
+<td align="left">1</td>
+<td align="left">2277</td>
+</tr>
+<tr class="even">
+<td align="left">6300211</td>
+<td align="left">67906c01</td>
+<td align="left">14</td>
+<td align="left">67908</td>
+</tr>
+<tr class="odd">
+<td align="left">4566309</td>
+<td align="left">2564</td>
+<td align="left">0</td>
+<td align="left">2564</td>
+</tr>
+<tr class="even">
+<td align="left">4275423</td>
+<td align="left">53657</td>
+<td align="left">1004</td>
+<td align="left">53657</td>
+</tr>
+<tr class="odd">
+<td align="left">6194308</td>
+<td align="left">92926</td>
+<td align="left">71</td>
+<td align="left">28967</td>
+</tr>
+<tr class="even">
+<td align="left">6229123</td>
+<td align="left">26561</td>
+<td align="left">4</td>
+<td align="left">26561</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">elements</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">84138</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">4</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">part_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">33765</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="9%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+<col width="4%" />
+<col width="10%" />
+<col width="7%" />
+<col width="9%" />
+<col width="8%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">element_id</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">5222065.12</td>
+<td align="right">1596842.63</td>
+<td align="right">9327</td>
+<td align="right">4259773.50</td>
+<td align="right">6057754</td>
+<td align="right">6262024.5</td>
+<td align="right">61532443</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">color_id</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">539.67</td>
+<td align="right">2044.86</td>
+<td align="right">-1</td>
+<td align="right">8.00</td>
+<td align="right">28</td>
+<td align="right">135.0</td>
+<td align="right">9999</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">design_id</td>
+<td align="right">23682</td>
+<td align="right">0.72</td>
+<td align="right">45569.87</td>
+<td align="right">30750.66</td>
+<td align="right">1001</td>
+<td align="right">18453.75</td>
+<td align="right">41748</td>
+<td align="right">75474.5</td>
+<td align="right">107520</td>
+<td align="left">▇▆▅▅▃</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="colors" class="section level2" number="4.7">
+<h2><span class="header-section-number">4.7</span> Colors</h2>
+<p>Tabela <strong>colors</strong> zawiera informacje o oficjalnych
+kolorach klocków LEGO. <br> Tabela zawiera <strong>263</strong>
+rekordy.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>id</strong></li>
+<li><strong>name</strong> - nazwa koloru</li>
+<li><strong>rgb</strong> - kolor zapisany w formacie RGB</li>
+<li><strong>is_trans</strong> - zmienna typu bool, określająca czy kolor
+jest transparentny</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<colgroup>
+<col width="4%" />
+<col width="21%" />
+<col width="24%" />
+<col width="24%" />
+<col width="24%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">rgb</th>
+<th align="left">is_trans</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : -1.0</td>
+<td align="left">Length:263</td>
+<td align="left">Length:263</td>
+<td align="left">Length:263</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.: 83.0</td>
+<td align="left">Class :character</td>
+<td align="left">Class :character</td>
+<td align="left">Class :character</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median :1005.0</td>
+<td align="left">Mode :character</td>
+<td align="left">Mode :character</td>
+<td align="left">Mode :character</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean : 651.4</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.:1070.5</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :9999.0</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">rgb</th>
+<th align="left">is_trans</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">-1</td>
+<td align="left">[Unknown]</td>
+<td align="left">0033B2</td>
+<td align="left">f</td>
+</tr>
+<tr class="even">
+<td align="left">0</td>
+<td align="left">Black</td>
+<td align="left">05131D</td>
+<td align="left">f</td>
+</tr>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">Blue</td>
+<td align="left">0055BF</td>
+<td align="left">f</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">Green</td>
+<td align="left">237841</td>
+<td align="left">f</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">Dark Turquoise</td>
+<td align="left">008F9B</td>
+<td align="left">f</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">Red</td>
+<td align="left">C91A09</td>
+<td align="left">f</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">colors</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">263</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">4</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">name</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">263</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">rgb</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">223</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">is_trans</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="17%" />
+<col width="12%" />
+<col width="17%" />
+<col width="8%" />
+<col width="8%" />
+<col width="3%" />
+<col width="4%" />
+<col width="6%" />
+<col width="8%" />
+<col width="6%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">651.38</td>
+<td align="right">750.55</td>
+<td align="right">-1</td>
+<td align="right">83</td>
+<td align="right">1005</td>
+<td align="right">1070.5</td>
+<td align="right">9999</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inventory-minifigs" class="section level2" number="4.8">
+<h2><span class="header-section-number">4.8</span> Inventory
+Minifigs</h2>
+<p>W tej tabeli zawarte zostały informacje o zapasach (nakładzie)
+figurek LEGO. <br> Tabela zawiera <strong>20858</strong> rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>inventory_id</strong></li>
+<li><strong>fig_num</strong> - oznaczenie figurki</li>
+<li><strong>quantity</strong> - ilość</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">inventory_id</th>
+<th align="left">fig_num</th>
+<th align="left">quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : 3</td>
+<td align="left">Length:20858</td>
+<td align="left">Min. : 1.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.: 7869</td>
+<td align="left">Class :character</td>
+<td align="left">1st Qu.: 1.000</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median : 15681</td>
+<td align="left">Mode :character</td>
+<td align="left">Median : 1.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean : 43010</td>
+<td align="left">NA</td>
+<td align="left">Mean : 1.062</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.: 66834</td>
+<td align="left">NA</td>
+<td align="left">3rd Qu.: 1.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :194312</td>
+<td align="left">NA</td>
+<td align="left">Max. :100.000</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left">inventory_id</th>
+<th align="left">fig_num</th>
+<th align="left">quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">fig-001549</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">fig-000764</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">19</td>
+<td align="left">fig-000555</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">25</td>
+<td align="left">fig-000574</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">26</td>
+<td align="left">fig-000842</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">26</td>
+<td align="left">fig-008641</td>
+<td align="left">1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">inventory_minifigs</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">20858</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">fig_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">13455</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="15%" />
+<col width="11%" />
+<col width="15%" />
+<col width="10%" />
+<col width="10%" />
+<col width="3%" />
+<col width="5%" />
+<col width="6%" />
+<col width="6%" />
+<col width="7%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">inventory_id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">43010.44</td>
+<td align="right">52256.78</td>
+<td align="right">3</td>
+<td align="right">7869</td>
+<td align="right">15681</td>
+<td align="right">66834</td>
+<td align="right">194312</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">quantity</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.06</td>
+<td align="right">0.78</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">100</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="minifigs" class="section level2" number="4.9">
+<h2><span class="header-section-number">4.9</span> Minifigs</h2>
+<p>W tabela <strong>minifigs</strong> znajdują się informacje o
+figurkach LEGO. <br> Tabela zawiera <strong>13764</strong> rekordy.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>fig_num</strong> - numer figurki</li>
+<li><strong>name</strong> - nazwa figurki</li>
+<li><strong>num_parts</strong> - liczba części</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<colgroup>
+<col width="4%" />
+<col width="24%" />
+<col width="24%" />
+<col width="22%" />
+<col width="24%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">fig_num</th>
+<th align="left">name</th>
+<th align="left">num_parts</th>
+<th align="left">img_url</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Length:13764</td>
+<td align="left">Length:13764</td>
+<td align="left">Min. : 0.000</td>
+<td align="left">Length:13764</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Class :character</td>
+<td align="left">Class :character</td>
+<td align="left">1st Qu.: 4.000</td>
+<td align="left">Class :character</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Mode :character</td>
+<td align="left">Mode :character</td>
+<td align="left">Median : 4.000</td>
+<td align="left">Mode :character</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Mean : 5.296</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">3rd Qu.: 5.000</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Max. :156.000</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<colgroup>
+<col width="9%" />
+<col width="35%" />
+<col width="8%" />
+<col width="46%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">fig_num</th>
+<th align="left">name</th>
+<th align="left">num_parts</th>
+<th align="left">img_url</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">fig-000001</td>
+<td align="left">Toy Store Employee</td>
+<td align="left">4</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/fig-000001.jpg" class="uri">https://cdn.rebrickable.com/media/sets/fig-000001.jpg</a></td>
+</tr>
+<tr class="even">
+<td align="left">fig-000002</td>
+<td align="left">Customer Kid</td>
+<td align="left">4</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/fig-000002.jpg" class="uri">https://cdn.rebrickable.com/media/sets/fig-000002.jpg</a></td>
+</tr>
+<tr class="odd">
+<td align="left">fig-000003</td>
+<td align="left">Assassin Droid, White</td>
+<td align="left">8</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/fig-000003.jpg" class="uri">https://cdn.rebrickable.com/media/sets/fig-000003.jpg</a></td>
+</tr>
+<tr class="even">
+<td align="left">fig-000004</td>
+<td align="left">Man, White Torso, Black Legs, Brown Hair</td>
+<td align="left">4</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/fig-000004.jpg" class="uri">https://cdn.rebrickable.com/media/sets/fig-000004.jpg</a></td>
+</tr>
+<tr class="odd">
+<td align="left">fig-000005</td>
+<td align="left">Captain America with Short Legs</td>
+<td align="left">3</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/fig-000005.jpg" class="uri">https://cdn.rebrickable.com/media/sets/fig-000005.jpg</a></td>
+</tr>
+<tr class="even">
+<td align="left">fig-000006</td>
+<td align="left">Lloyd Avatar</td>
+<td align="left">5</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/fig-000006.jpg" class="uri">https://cdn.rebrickable.com/media/sets/fig-000006.jpg</a></td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">minifigs</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">13764</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">4</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">fig_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">13764</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">name</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">148</td>
+<td align="right">0</td>
+<td align="right">13354</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">img_url</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">53</td>
+<td align="right">53</td>
+<td align="right">0</td>
+<td align="right">13764</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="13%" />
+<col width="18%" />
+<col width="6%" />
+<col width="6%" />
+<col width="4%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="6%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">num_parts</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5.3</td>
+<td align="right">6.03</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">4</td>
+<td align="right">5</td>
+<td align="right">156</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="inventory-sets" class="section level2" number="4.10">
+<h2><span class="header-section-number">4.10</span> Inventory Sets</h2>
+<p>Tabela <strong>inventory_sets</strong> zawiera informacje o zapasach
+(nakładzie) zestawów LEGO. <br> Tabela zawiera <strong>4358</strong>
+rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>inventory_id</strong></li>
+<li><strong>set_num</strong> - oznaczenie zestawu</li>
+<li><strong>quantity</strong> - liczba</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">inventory_id</th>
+<th align="left">set_num</th>
+<th align="left">quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : 35</td>
+<td align="left">Length:4358</td>
+<td align="left">Min. : 1.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.: 8076</td>
+<td align="left">Class :character</td>
+<td align="left">1st Qu.: 1.000</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median : 16423</td>
+<td align="left">Mode :character</td>
+<td align="left">Median : 1.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean : 52519</td>
+<td align="left">NA</td>
+<td align="left">Mean : 1.813</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.: 98685</td>
+<td align="left">NA</td>
+<td align="left">3rd Qu.: 1.000</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :191576</td>
+<td align="left">NA</td>
+<td align="left">Max. :60.000</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left">inventory_id</th>
+<th align="left">set_num</th>
+<th align="left">quantity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">35</td>
+<td align="left">75911-1</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">35</td>
+<td align="left">75912-1</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">39</td>
+<td align="left">75048-1</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">39</td>
+<td align="left">75053-1</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">50</td>
+<td align="left">4515-1</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">50</td>
+<td align="left">4520-1</td>
+<td align="left">2</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">inventory_sets</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">4358</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">set_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">3171</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="15%" />
+<col width="11%" />
+<col width="15%" />
+<col width="10%" />
+<col width="10%" />
+<col width="3%" />
+<col width="5%" />
+<col width="6%" />
+<col width="6%" />
+<col width="7%" />
+<col width="6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">inventory_id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">52518.95</td>
+<td align="right">59063.13</td>
+<td align="right">35</td>
+<td align="right">8076</td>
+<td align="right">16423</td>
+<td align="right">98685</td>
+<td align="right">191576</td>
+<td align="left">▇▁▁▂▁</td>
+</tr>
+<tr class="even">
+<td align="left">quantity</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.81</td>
+<td align="right">5.67</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">60</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="sets" class="section level2" number="4.11">
+<h2><span class="header-section-number">4.11</span> Sets</h2>
+<p>Tabela <strong>sets</strong> zawiera informacje o oficjalnych
+kolorach klocków LEGO. <br> Tabela zawiera <strong>21880</strong>
+rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>set_num</strong> - oznaczenie zestawu</li>
+<li><strong>name</strong> - nazwa zestawu</li>
+<li><strong>year</strong> - rok, z którego pochodzi zestaw</li>
+<li><strong>theme_id</strong> - numer kategorii zestawu</li>
+<li><strong>num_parts</strong> - liczba części</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<colgroup>
+<col width="3%" />
+<col width="17%" />
+<col width="17%" />
+<col width="13%" />
+<col width="12%" />
+<col width="16%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">set_num</th>
+<th align="left">name</th>
+<th align="left">year</th>
+<th align="left">theme_id</th>
+<th align="left">num_parts</th>
+<th align="left">img_url</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Length:21880</td>
+<td align="left">Length:21880</td>
+<td align="left">Min. :1949</td>
+<td align="left">Min. : 1</td>
+<td align="left">Min. : 0.0</td>
+<td align="left">Length:21880</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Class :character</td>
+<td align="left">Class :character</td>
+<td align="left">1st Qu.:2001</td>
+<td align="left">1st Qu.:273</td>
+<td align="left">1st Qu.: 3.0</td>
+<td align="left">Class :character</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Mode :character</td>
+<td align="left">Mode :character</td>
+<td align="left">Median :2012</td>
+<td align="left">Median :497</td>
+<td align="left">Median : 31.0</td>
+<td align="left">Mode :character</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Mean :2008</td>
+<td align="left">Mean :442</td>
+<td align="left">Mean : 161.4</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">3rd Qu.:2018</td>
+<td align="left">3rd Qu.:608</td>
+<td align="left">3rd Qu.: 139.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">Max. :2024</td>
+<td align="left">Max. :752</td>
+<td align="left">Max. :11695.0</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<colgroup>
+<col width="7%" />
+<col width="24%" />
+<col width="4%" />
+<col width="8%" />
+<col width="9%" />
+<col width="45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">set_num</th>
+<th align="left">name</th>
+<th align="left">year</th>
+<th align="left">theme_id</th>
+<th align="left">num_parts</th>
+<th align="left">img_url</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">001-1</td>
+<td align="left">Gears</td>
+<td align="left">1965</td>
+<td align="left">1</td>
+<td align="left">43</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/001-1.jpg" class="uri">https://cdn.rebrickable.com/media/sets/001-1.jpg</a></td>
+</tr>
+<tr class="even">
+<td align="left">0011-2</td>
+<td align="left">Town Mini-Figures</td>
+<td align="left">1979</td>
+<td align="left">67</td>
+<td align="left">12</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/0011-2.jpg" class="uri">https://cdn.rebrickable.com/media/sets/0011-2.jpg</a></td>
+</tr>
+<tr class="odd">
+<td align="left">0011-3</td>
+<td align="left">Castle 2 for 1 Bonus Offer</td>
+<td align="left">1987</td>
+<td align="left">199</td>
+<td align="left">0</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/0011-3.jpg" class="uri">https://cdn.rebrickable.com/media/sets/0011-3.jpg</a></td>
+</tr>
+<tr class="even">
+<td align="left">0012-1</td>
+<td align="left">Space Mini-Figures</td>
+<td align="left">1979</td>
+<td align="left">143</td>
+<td align="left">12</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/0012-1.jpg" class="uri">https://cdn.rebrickable.com/media/sets/0012-1.jpg</a></td>
+</tr>
+<tr class="odd">
+<td align="left">0013-1</td>
+<td align="left">Space Mini-Figures</td>
+<td align="left">1979</td>
+<td align="left">143</td>
+<td align="left">12</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/0013-1.jpg" class="uri">https://cdn.rebrickable.com/media/sets/0013-1.jpg</a></td>
+</tr>
+<tr class="even">
+<td align="left">0014-1</td>
+<td align="left">Space Mini-Figures</td>
+<td align="left">1979</td>
+<td align="left">143</td>
+<td align="left">2</td>
+<td align="left"><a href="https://cdn.rebrickable.com/media/sets/0014-1.jpg" class="uri">https://cdn.rebrickable.com/media/sets/0014-1.jpg</a></td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">sets</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">21880</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">6</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">set_num</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">21880</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">name</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">93</td>
+<td align="right">0</td>
+<td align="right">18752</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">img_url</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">46</td>
+<td align="right">63</td>
+<td align="right">0</td>
+<td align="right">21880</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="16%" />
+<col width="11%" />
+<col width="16%" />
+<col width="9%" />
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="7%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2007.76</td>
+<td align="right">13.96</td>
+<td align="right">1949</td>
+<td align="right">2001</td>
+<td align="right">2012</td>
+<td align="right">2018</td>
+<td align="right">2024</td>
+<td align="left">▁▁▁▃▇</td>
+</tr>
+<tr class="even">
+<td align="left">theme_id</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">441.97</td>
+<td align="right">215.53</td>
+<td align="right">1</td>
+<td align="right">273</td>
+<td align="right">497</td>
+<td align="right">608</td>
+<td align="right">752</td>
+<td align="left">▃▃▃▇▇</td>
+</tr>
+<tr class="odd">
+<td align="left">num_parts</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">161.38</td>
+<td align="right">418.14</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">31</td>
+<td align="right">139</td>
+<td align="right">11695</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="themes" class="section level2" number="4.12">
+<h2><span class="header-section-number">4.12</span> Themes</h2>
+<p>W tej tabeli zawarte zostały informacje o oryginalnych kategoriach
+zestawów, jak i o współpracach np. (Lego Star Wars). <br> Tabela zawiera
+<strong>468</strong> rekordów.</p>
+<p>Atrybuty w tej tabeli to:</p>
+<ul>
+<li><strong>id</strong></li>
+<li><strong>name</strong> - nazwa kategorii zestawu</li>
+<li><strong>parent_id</strong> - numer kategorii “rodzica”</li>
+</ul>
+<table>
+<caption>Podstawowe statystyki danych z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">parent_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Min. : 1.0</td>
+<td align="left">Length:468</td>
+<td align="left">Min. : 1.0</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">1st Qu.:250.5</td>
+<td align="left">Class :character</td>
+<td align="left">1st Qu.:186.0</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">Median :466.0</td>
+<td align="left">Mode :character</td>
+<td align="left">Median :411.0</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Mean :433.5</td>
+<td align="left">NA</td>
+<td align="left">Mean :360.6</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">3rd Qu.:625.2</td>
+<td align="left">NA</td>
+<td align="left">3rd Qu.:512.5</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">Max. :752.0</td>
+<td align="left">NA</td>
+<td align="left">Max. :697.0</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">NA</td>
+<td align="left">NA</td>
+<td align="left">NA’s :145</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Kilka pierwszych elementów z tabeli</caption>
+<thead>
+<tr class="header">
+<th align="left">id</th>
+<th align="left">name</th>
+<th align="left">parent_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">Technic</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">3</td>
+<td align="left">Competition</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="left">Expert Builder</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">16</td>
+<td align="left">RoboRiders</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">17</td>
+<td align="left">Speed Slammers</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">18</td>
+<td align="left">Star Wars</td>
+<td align="left">1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">themes</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">468</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">name</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">42</td>
+<td align="right">0</td>
+<td align="right">385</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="16%" />
+<col width="12%" />
+<col width="16%" />
+<col width="8%" />
+<col width="8%" />
+<col width="3%" />
+<col width="7%" />
+<col width="4%" />
+<col width="8%" />
+<col width="6%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">id</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">433.46</td>
+<td align="right">216.55</td>
+<td align="right">1</td>
+<td align="right">250.5</td>
+<td align="right">466</td>
+<td align="right">625.25</td>
+<td align="right">752</td>
+<td align="left">▅▅▅▆▇</td>
+</tr>
+<tr class="even">
+<td align="left">parent_id</td>
+<td align="right">145</td>
+<td align="right">0.69</td>
+<td align="right">360.64</td>
+<td align="right">197.19</td>
+<td align="right">1</td>
+<td align="right">186.0</td>
+<td align="right">411</td>
+<td align="right">512.50</td>
+<td align="right">697</td>
+<td align="left">▅▃▂▇▂</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="kod---brakujące-dane" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Kod - brakujące

@@ -1,5 +1,5 @@
 ---
-title: "ZED - Projekt 1 (Analiza danych dotyczących LEGO)"
+title: "ZED - Projekt 1 <br>Analiza danych dotyczących LEGO"
 author: "Bartłomiej Kowalewski, 145204"
 date: "`r Sys.Date()`"
 output: 
@@ -24,46 +24,258 @@ knitr::opts_chunk$set(echo=F, warning=F, message=F)
 
 # Wykorzystane biblioteki
 
-Wykorzystane biblioteki:
-
-- knitr,
-- dplyr,
-- EDAWR
-- skimr,
-- DT.
+Do stworzenia raportu wykorzystano następujące biblioteki:
 
 ```{r ladowanie_bibliotek, echo=T}
 library(knitr)
 library(dplyr)
-library(EDAWR)
+library(ggplot2)
 library(skimr)
-library(DT)
+library(plotly)
 ```
 
-```{r}
+```{r setup_ladnych_tabel}
 prettyTable <- function(table_df, round_digits=2) {
     DT::datatable(table_df, style="bootstrap", filter = "top", rownames = FALSE, extensions = "Buttons", options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', 'excel', 'pdf', 'print'))) %>% formatRound(names(dplyr::select_if(table_df, is.numeric)), round_digits)
 }
 ```
 
+W celu uzyskania powtarzalności rezultatów ustawiono ziarno dla generatora liczb pseudolosowych.
+
+```{r ustawienie_ziarna, echo=T}
+set.seed(23)
+```
+
+# Wczytanie danych
+
+Poniżej znajduje się kod odpowiedzialny za wczytanie danych z plików.
+
+```{r wczytanie_danych, echo=T, cache=T}
+inventories <- read.csv("rebrickable/inventories.csv")
+inventory_parts <- read.csv("rebrickable/inventory_parts.csv")
+parts <- read.csv("rebrickable/parts.csv")
+part_categories <- read.csv("rebrickable/part_categories.csv")
+part_relationships <- read.csv("rebrickable/part_relationships.csv")
+elements <- read.csv("rebrickable/elements.csv")
+colors <- read.csv("rebrickable/colors.csv")
+inventory_minifigs <- read.csv("rebrickable/inventory_minifigs.csv")
+minifigs <- read.csv("rebrickable/minifigs.csv")
+inventory_sets <- read.csv("rebrickable/inventory_sets.csv")
+sets <- read.csv("rebrickable/sets.csv")
+themes <- read.csv("rebrickable/themes.csv")
+```
 
 # Opis zbioru danych
 
-```{r wczytanie_danych, echo=F, cache=T}
+Cały zbiór danych dotyczący klocków LEGO składa się z 12 tabel. Poniżej znajdują się sekcje zawierające opisy każdej z nich, wyświetlające informacje o ich rozmiarze oraz podstawowe statystyki.
+
+## Inventories
+
+Jest to tabela nadrzędna łącząca części i figurki z zestawami LEGO.
+<br> Tabela zawiera **`r nrow(inventories)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **id**
+* **version** - numer wersji
+* **set_num** - numer zestawu
+
+```{r opis_danych_inventories}
+kable(summary(inventories), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(inventories), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(inventories)
 ```
 
-Wykorzystany zbiór danych posiada 3800 rekordów zawierających informacje o liczbie zachorowań na gruźlicę w poszczególnych krajach w latach 1995-2013.
+## Inventory Parts
 
-Atrybuty w zbiorze danych:
+W tej tabeli zostały zawarte informacje o zapasach (nakładach) części LEGO.
+<br> Tabela zawiera **`r nrow(inventory_parts)`** rekordów.
 
-- "country" - kraj,
-- "year" - rok,
-- "sex" - płeć,
-- "child" - liczba przypadków odnotowanych wśród osób w wieku 0-14 lat,
-- "adult" - liczba przypadków odnotowanych wśród osób w wieku 15-64 lata,
-- "elderly" - liczba przypadków odnotowanych wśród osób w wieku powyżej 64 lat.
+Atrybuty w tej tabeli to:
 
-# Kod - wczytanie danych
+* **inventory_id**
+* **part_num** - oznaczenie części
+* **color_id** - numer koloru
+* **quantity** - ilość
+* **is_spare** - zmienna typu bool, określająca czy klocek jest w zapasie
+
+```{r opis_danych_inventory_parts}
+kable(summary(inventory_parts), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(inventory_parts), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(inventory_parts)
+```
+
+## Parts
+
+Tabela **parts** zawiera informacje o częściach LEGO, które mogą składać się z kilku elementów.
+<br> Tabela zawiera **`r nrow(parts)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **part_num** - oznaczenie części
+* **name** - nazwa części
+* **part_cat_id** - id kategorii części
+
+```{r opis_danych_parts}
+kable(summary(parts), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(parts), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(parts)
+```
+
+## Part Categories
+
+Tabela **part_categories** zawiera informacje o kategoriach części LEGO.
+<br> Tabela zawiera **`r nrow(part_categories)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **id**
+* **name** - nazwa kategorii części
+
+```{r opis_danych_part_categories}
+kable(summary(part_categories), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(part_categories), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(part_categories)
+```
+
+## Part Relationships
+
+W tej tabeli zostały zawarte informacje o relacjach między poszczególnymi częściami.
+<br> Tabela zawiera **`r nrow(part_relationships)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **rel_type** - oznaczenie relacji
+* **child_part_num** - oznaczenie części "dziecka"
+* **parent_part_num** - oznaczenie części "rodzica"
+
+```{r opis_danych_part_relationships}
+kable(summary(part_relationships), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(part_relationships), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(part_relationships)
+```
+
+## Elements
+
+W tabeli **elements** znajdują się informacje o pojedynczych klockach LEGO.
+<br> Tabela zawiera **`r nrow(elements)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **element_id**
+* **part_num** - oznaczenie części, w której skład wchodzi dany element
+* **color_id** - numer koloru
+
+```{r opis_danych_elements}
+kable(summary(elements), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(elements), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(elements)
+```
+
+## Colors
+
+Tabela **colors** zawiera informacje o oficjalnych kolorach klocków LEGO.
+<br> Tabela zawiera **`r nrow(colors)`** rekordy.
+
+Atrybuty w tej tabeli to:
+
+* **id**
+* **name** - nazwa koloru
+* **rgb** - kolor zapisany w formacie RGB
+* **is_trans** - zmienna typu bool, określająca czy kolor jest transparentny
+
+```{r opis_danych_colors}
+kable(summary(colors), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(colors), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(colors)
+```
+
+## Inventory Minifigs
+
+W tej tabeli zawarte zostały informacje o zapasach (nakładzie) figurek LEGO.
+<br> Tabela zawiera **`r nrow(inventory_minifigs)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **inventory_id**
+* **fig_num** - oznaczenie figurki
+* **quantity** - ilość
+
+```{r opis_danych_inventory_minifigs}
+kable(summary(inventory_minifigs), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(inventory_minifigs), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(inventory_minifigs)
+```
+
+## Minifigs
+
+W tabela **minifigs** znajdują się informacje o figurkach LEGO.
+<br> Tabela zawiera **`r nrow(minifigs)`** rekordy.
+
+Atrybuty w tej tabeli to:
+
+* **fig_num** - numer figurki
+* **name** - nazwa figurki
+* **num_parts** - liczba części
+
+```{r opis_danych_minifigs}
+kable(summary(minifigs), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(minifigs), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(minifigs)
+```
+
+## Inventory Sets
+
+Tabela **inventory_sets** zawiera informacje o zapasach (nakładzie) zestawów LEGO.
+<br> Tabela zawiera **`r nrow(inventory_sets)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **inventory_id**
+* **set_num** - oznaczenie zestawu
+* **quantity** - liczba
+
+```{r opis_danych_inventory_sets}
+kable(summary(inventory_sets), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(inventory_sets), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(inventory_sets)
+```
+
+## Sets
+
+Tabela **sets** zawiera informacje o oficjalnych kolorach klocków LEGO.
+<br> Tabela zawiera **`r nrow(sets)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **set_num** - oznaczenie zestawu
+* **name** - nazwa zestawu
+* **year** - rok, z którego pochodzi zestaw
+* **theme_id** - numer kategorii zestawu
+* **num_parts** - liczba części
+
+```{r opis_danych_sets}
+kable(summary(sets), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(sets), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(sets)
+```
+
+## Themes
+
+W tej tabeli zawarte zostały informacje o oryginalnych kategoriach zestawów, jak i o współpracach np. (Lego Star Wars).
+<br> Tabela zawiera **`r nrow(themes)`** rekordów.
+
+Atrybuty w tej tabeli to:
+
+* **id**
+* **name** - nazwa kategorii zestawu
+* **parent_id** - numer kategorii "rodzica"
+
+```{r opis_danych_themes}
+kable(summary(themes), align = "l", caption = "Podstawowe statystyki danych z tabeli")
+kable(head(themes), align = "l", caption = "Kilka pierwszych elementów z tabeli")
+skim(themes)
+```
 
 # Kod - brakujące dane
 
