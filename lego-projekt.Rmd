@@ -99,7 +99,7 @@ Atrybuty w tej tabeli to:
 * **part_num** - oznaczenie części
 * **color_id** - numer koloru
 * **quantity** - ilość
-* **is_spare** - zmienna typu bool, określająca czy klocek jest w zapasie
+* **is_spare** - zmienna typu bool, określająca czy część jest zapasowa
 * **img_url** - adres url zdjęcia części
 
 ```{r opis_danych_inventory_parts}
@@ -269,13 +269,13 @@ skim(sets)
 
 ## Themes
 
-W tej tabeli zawarte zostały informacje o oryginalnych kategoriach zestawów, jak i o współpracach np. (Lego Star Wars).
+W tej tabeli zawarte zostały informacje o oryginalnych kategoriach (tematykach) zestawów, jak i o współpracach np. (Lego Star Wars).
 <br> Tabela zawiera **`r nrow(themes)`** rekordów.
 
 Atrybuty w tej tabeli to:
 
 * **id**
-* **name** - nazwa kategorii zestawu
+* **name** - nazwa kategorii (tematyki)
 * **parent_id** - numer kategorii "rodzica"
 
 ```{r opis_danych_themes}
@@ -340,11 +340,11 @@ parts_by_material %>%
   kable(col.names = c("Materiał", "Liczba części", "Procent"))
 ```
 
-### Najbardziej popularne kategorie zestawów
+### Najbardziej popularne tematyki zestawów
 
-Poniżej znajduje się wykres przedstawiający 10 kategorii (motywy), w których jest najwięcej zestawów.
+Poniżej znajduje się wykres przedstawiający 10 tematyk (motywów), w których jest najwięcej zestawów.
 
-```{r najpopularniejsze_kategorie, echo=T}
+```{r najpopularniejsze_tematyki, echo=T}
 themes %>%
   rename(theme_name = name) %>%
   merge(sets, by.x="id", by.y="theme_id") %>%
@@ -356,23 +356,131 @@ themes %>%
            geom_bar(stat="identity", fill="#00abff") +
            coord_flip() + 
            ggtitle("10 najpopularniejszych kategorii zestawów") +
-           labs(x = "Kategoria zestawu", y = "Liczba zestawów w danej kategorii ") +
+           labs(x = "Kategoria zestawu", y = "Liczba zestawów w danej kategorii") +
            theme_bw() + 
            easy_center_title() -> pop_themes
   
 ggplotly(pop_themes)
 ```
 
-Z powyższego wykresu wynika, że najpopularniejszą kategorią (motywem) jest Books, gdyż w tej kategorii są 973 zestawy.
+Z powyższego wykresu wynika, że najpopularniejszą tematyką (motywem) są Books, gdyż w tej kategorii są 973 zestawy.
+
+### Największe zestawy
+
+Następna analiza dotyczy wielkości zestawów w zbiorze danych. Poniżej znajduje się wykres i tabela prezentująca 10 najbardziej złożonych zestawów LEGO ze zbioru Rebrickable.
+
+```{r najwieksze_zestawy, echo=T}
+sets %>%
+  arrange(desc(num_parts)) %>%
+  select(name, img_url, num_parts) %>%
+  mutate(img_url = paste0("<","img src=",img_url," height=120 width=100>")) %>%
+  head(10) -> big_sets
+
+big_sets %>%
+  ggplot(aes(x = reorder(name, num_parts), y = num_parts)) +
+  geom_bar(stat="identity", fill="#00abff") +
+  coord_flip() +
+  ggtitle("10 największych zestawów") +
+  labs(x = "Zestaw", y = "Liczba części w zestawie") +
+  theme_bw() +
+  easy_center_title() -> big_sets_fig
+
+ggplotly(big_sets_fig)
+kable(big_sets, col.names = c("Nazwa", "", "Liczba części"))
+```
+
+Największym zestawem LEGO w podanym zbiorze danych jest World Map, który składa się z dokładnie 11695 części.
+
+### Najpopularniejsze kolory części
+
+W podanym zbiorze danym warto również było dokonać analizy popularności kolorów. Poniżej znajduje się wykres przedstawiający 10 najpopularniejszych kolorów części.
+
+```{r najpopularniejsze_kolory, echo=T}
+colors %>%
+  rename(color_name = name) %>%
+  merge(elements, by.x="id", by.y="color_id") %>%
+  merge(parts, by.x="part_num", by.y="part_num") %>%
+  group_by(rgb, color_name) %>%
+  summarize(color_count = n()) %>%
+  arrange(desc(color_count)) %>%
+  mutate(rgb = paste0("#",rgb)) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(color_name, color_count), y = color_count, fill=rgb, color="black")) + 
+           geom_bar(stat="identity") +
+           coord_flip() + 
+           scale_fill_identity() +
+           scale_color_identity() +
+           ggtitle("10 najpopularniejszych kolorów części") +
+           labs(x = "Kolor", y = "Liczba części") +
+           theme_bw() +  theme(legend.position = "none") +
+           easy_center_title() -> pop_color
+  
+ggplotly(pop_color)
+```
+
+Z powyższego wykresu wynika, że najpopularniejeszymi kolorami części LEGO są czarny i biały.
+
+### Najpopularniejsze kategorie (rodzaje) części
+
+Poniżej znajduje się wykres przedstawiający 10 najczęściej występujących kategorii (rodzajów) części.
+
+```{r najpopularniejsze_kategorie, echo=T}
+parts %>%
+  rename(part_name = name) %>%
+  merge(part_categories, by.x="part_cat_id", by.y="id") %>%
+  group_by(part_cat_id, name) %>%
+  summarize(part_count = n()) %>%
+  arrange(desc(part_count)) %>%
+  head(10) %>%
+  ggplot(aes(x = reorder(name, part_count), y = part_count)) +
+  geom_bar(stat="identity", fill="#00abff") +
+  coord_flip() +
+  ggtitle("10 najpopularniejszych kategorii części") +
+  labs(x = "Kategoria", y = "Liczba części należących do kategorii") +
+  theme_bw() +
+  easy_center_title() -> pop_cat_fig
+  
+ggplotly(pop_cat_fig)
+```
+
+Z powyższego wykresu wynika, że najliczniejszą kategorią jest **Minifig Upper Body**, do której należy 6329 części.
+
+### Najpopularniejsze części w zestawach
+
+Kolejna analiza dotyczy popularności części w zestawach. Poniżej znajduje się wykres oraz tabela przedstawiająca 10 najpopularniejszych części w zestawach LEGO.
+
+```{r najpopularniejsze_części, echo=T}
+parts %>%
+  merge(inventory_parts, by.x="part_num", by.y="part_num") %>%
+  merge(inventories, by.x="inventory_id", by.y="id") %>%
+  group_by(part_num, name, img_url, color_id) %>%
+  summarize(part_count = n()) %>%
+  mutate(img_url = paste0("<","img src=",img_url," height=100 width=100>")) %>%
+  select(part_num, name, img_url, part_count, color_id) %>%
+  arrange(desc(part_count)) %>%
+  head(10) -> pop_parts
+
+pop_parts %>%
+  mutate(name = strtrim(name, 20)) %>%
+  ggplot(aes(x = reorder(paste0(part_num, ": ", name, " (", color_id, ")"), part_count), y = part_count, fill=)) + 
+           geom_bar(stat="identity", fill="#00abff") +
+           coord_flip() + 
+           scale_color_identity() +
+           ggtitle("10 najpopularniejszych części w zestawach") +
+           labs(x = "Część", y = "Liczba wystąpięń części") +
+           theme_bw() +
+           easy_center_title() -> pop_parts_fig
+  
+ggplotly(pop_parts_fig)
+pop_parts %>%
+  select(part_num, name, img_url, part_count) %>%
+  kable(col.names = c("Nr części", "Nazwa części", "", "Łączna liczba wystąpień części"))
+```
+
+Najczęściej występującą częścią w zestawach jest **Technic Pin with Friction Ridges Lengthwise and Center Slots**, który znalazł sie łącznie 4769 razy we wszystkich zestawach LEGO.
 
 ## Analiza trendów
 
 # Korelacje między zmiennymi
 
 # Predykcja dalszych cech zestawów LEGO
-
-# Kod - przetwarzanie danych 
-
-# Szczegółowa analiza wartości atrybutów w zbiorze
-
-# Interaktywne wykresy i animacje
