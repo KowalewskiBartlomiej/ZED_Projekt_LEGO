@@ -37,6 +37,7 @@ library(ggeasy)
 library(formattable)
 library(tidyverse)
 library(scales)
+library(ggcorrplot)
 ```
 
 ```{r setup_ladnych_tabel}
@@ -297,7 +298,7 @@ W tej sekcji dokonano analizy wczytanych danych w celu wykrycia ciekawych zależ
 
 Poniższy wykres przedstawia 10 najczęściej występujących figurek w zestawach LEGO.
 
-```{r najpopularniejsze_figurki, echo=T}
+```{r najpopularniejsze_figurki, echo=T, cache=F}
 inventory_minifigs %>%
   merge(inventories, by.x="inventory_id", by.y="id") %>%
   merge(minifigs, by="fig_num") %>%
@@ -323,7 +324,7 @@ Z wykresu wynika, że najbardziej popularną figurką jest figurka szkieleta, kt
 
 Poniżej znajduje się wykres kołowy oraz tabela podsumowująca procentowy rozkład materiałów, z których wykonano części LEGO. Niemalże wszystkie z nich (aż około 98,88%) zostały wykonane z plastiku. Następnym najczęściej używanym materiałem jest guma (około 0.71%).
 
-```{r rozklad_materiałow, echo=T}
+```{r rozklad_materiałow, echo=T, cache=F}
 parts %>%
   merge(inventory_parts, by="part_num") %>%
   group_by(part_material) %>%
@@ -347,7 +348,7 @@ parts_by_material %>%
 
 Poniżej znajduje się wykres przedstawiający 10 tematyk (motywów), w których jest najwięcej zestawów.
 
-```{r najpopularniejsze_tematyki, echo=T}
+```{r najpopularniejsze_tematyki, echo=T, cache=F}
 themes %>%
   rename(theme_name = name) %>%
   merge(sets, by.x="id", by.y="theme_id") %>%
@@ -373,7 +374,7 @@ Z powyższego wykresu wynika, że najpopularniejszą tematyką (motywem) są Boo
 
 Następna analiza dotyczy wielkości zestawów w zbiorze danych. Poniżej znajduje się wykres i tabela prezentująca 10 najbardziej złożonych zestawów LEGO ze zbioru Rebrickable.
 
-```{r najwieksze_zestawy, echo=T}
+```{r najwieksze_zestawy, echo=T, cache=F}
 sets %>%
   arrange(desc(num_parts)) %>%
   select(name, img_url, num_parts) %>%
@@ -400,7 +401,7 @@ Największym zestawem LEGO w podanym zbiorze danych jest World Map, który skła
 
 W podanym zbiorze danym warto również było dokonać analizy popularności kolorów. Poniżej znajduje się wykres przedstawiający 10 najpopularniejszych kolorów części.
 
-```{r najpopularniejsze_kolory, echo=T}
+```{r najpopularniejsze_kolory, echo=T, cache=F}
 colors %>%
   rename(color_name = name) %>%
   merge(elements, by.x="id", by.y="color_id") %>%
@@ -430,7 +431,7 @@ Z powyższego wykresu wynika, że najpopularniejeszymi kolorami części LEGO s�
 
 Poniżej znajduje się wykres przedstawiający 10 najczęściej występujących kategorii (rodzajów) części.
 
-```{r najpopularniejsze_kategorie, echo=T}
+```{r najpopularniejsze_kategorie, echo=T, cache=F}
 parts %>%
   rename(part_name = name) %>%
   merge(part_categories, by.x="part_cat_id", by.y="id") %>%
@@ -456,7 +457,7 @@ Z powyższego wykresu wynika, że najliczniejszą kategorią jest **Minifig Uppe
 
 Kolejna analiza dotyczy popularności części w zestawach (biorąc pod uwagę również kolor). Poniżej znajduje się wykres oraz tabela przedstawiająca 10 najpopularniejszych części w zestawach LEGO.
 
-```{r najpopularniejsze_części, echo=T}
+```{r najpopularniejsze_części, echo=T, cache=F}
 parts %>%
   merge(inventory_parts, by.x="part_num", by.y="part_num") %>%
   merge(inventories, by.x="inventory_id", by.y="id") %>%
@@ -491,7 +492,7 @@ Najczęściej występującą częścią w zestawach jest **Technic Pin with Fric
 
 Dokonano również analizy dotyczącej transparentności kolorów części. Poniżej znajduje sie wykres oraz tabela przedstawiająca, ile części jest w kolorze transparentnym i nietransparentnym.
 
-```{r transparentność_części, echo=T}
+```{r transparentność_części, echo=T, cache=F}
 parts %>%
   merge(elements, by="part_num") %>%
   merge(colors, by.x="color_id", by.y="id") %>%
@@ -521,7 +522,7 @@ Na podstawie wykresu i tabeli można stwierdzić, że zdecydowana większość (
 
 Następna analiza ma na celu znalezienie najbardziej złożonych tematyk (motywów) tj. takich, w których skład wchodzą inne tematyki (motywy). Poniżej znajduje się wykres przedstawiający 10 motywów z największą liczbą podmotywów.
 
-```{r najbardziej_zlozone_motywy, echo=T}
+```{r najbardziej_zlozone_motywy, echo=T, cache=F}
 themes %>%
   rename(theme_name = name) %>%
   merge(themes, by.x="id", by.y="parent_id") %>%
@@ -549,13 +550,15 @@ W tej sekcji dokonano analizy zmian związanych z LEGO, jakie zachodziły na prz
 
 Poniżej znajduje się wykres pokazujący jak zmieniała się liczba nowych tematyk na przestrzeni lat (1949-2023).
 
-```{r trend_nowe_tematyki, echo=T}
+```{r trend_nowe_tematyki, echo=T, cache=F}
 themes %>%
   rename(theme_name = name) %>%
   merge(sets, by.x="id", by.y="theme_id") %>%
   filter(year <= 2023) %>%
   group_by(year) %>%
-  summarize(new_themes_count = n_distinct(theme_name, na.rm = T)) %>%
+  summarize(new_themes_count = n_distinct(theme_name, na.rm = T)) -> unique_themes
+
+unique_themes %>%
   ggplot(aes(x = year, y = new_themes_count)) +
   geom_line(color="#00abff") +
   ggtitle("Nowe tematyki na przestrzeni lat") +
@@ -571,11 +574,13 @@ ggplotly(new_themes_trend_fig)
 
 Kolejna analiza dotyczy średniej liczby części wchodzącej w skład zestawów na przestrzeni lat (1949-2023).
 
-```{r trend_srednio_czesci_zestaw, echo=T}
+```{r trend_srednio_czesci_zestaw, echo=T, cache=F}
 sets %>%
   filter(year <= 2023) %>%
   group_by(year) %>%
-  summarize(set_mean_parts = mean(num_parts, na.rm = T), sets_count = n()) %>%
+  summarize(set_mean_parts = mean(num_parts, na.rm = T), sets_count = n()) -> mean_parts
+
+mean_parts %>%
   ggplot(aes(x = year, y = set_mean_parts)) +
   geom_line(color="#00abff") +
   ggtitle("Średnia liczba części w zestawach na przestrzeni lat") +
@@ -591,7 +596,7 @@ ggplotly(mean_parts_per_set_trend_fig)
 
 Poniżej znajduje się wykres przedstawiający wykorzystanie figurek w zestawach. Pierwsze figurki LEGO pojawiły się w 1975 roku.
 
-```{r trend_figurki, echo=T}
+```{r trend_figurki, echo=T, cache=F}
 minifigs %>%
   rename(fig_name = name, fig_num_parts = num_parts) %>%
   merge(inventory_minifigs, by.x="fig_num", by.y="fig_num") %>%
@@ -599,7 +604,9 @@ minifigs %>%
   merge(sets, by.x="set_num", by.y="set_num") %>%
   filter(year <= 2023) %>%
   group_by(year) %>%
-  summarize(figures_count = n()) %>%
+  summarize(figures_count = n()) -> minifigs_trend
+
+minifigs_trend %>%
   ggplot(aes(x = year, y = figures_count)) +
   geom_line(color="#00abff") +
   ggtitle("Łączna liczba figurek wykorzystanych w zestawach w latach 1975-2023") +
@@ -615,7 +622,7 @@ ggplotly(fig_usage_trend_fig)
 
 W tej sekcji przeanalizowano liczbę zestawów pojawiających się na przestrzeni lat. 
 
-```{r trend_zestawy, echo=T}
+```{r trend_zestawy, echo=T, cache=F}
 sets %>%
   filter(year <= 2023) %>%
   group_by(year) %>%
@@ -635,29 +642,53 @@ ggplotly(sets_trend_fig)
 
 Poniżej znajduje się wykres pokazujący jak na przestrzeni lat zmieniała się średnia liczba elementów w jednej części.
 
-```{r trend_elementy_czesc, echo=T}
-# elements %>%
-#   group_by(part_num, color_id) %>%
-#   summarize(elements_per_part = n()) %>%
-#   merge(colors, by.x="color_id", by.y="id") %>%
-#   rename(color_name = name, elem_color_id = color_id) %>%
-#   merge(parts, by.x="part_num", by.y="part_num") %>%
-#   merge(inventory_parts, by.x="part_num", by.y="part_num") %>%
-#   merge(inventories, by.x="inventory_id", by.y="id") %>%
-#   rename(part_name = name) %>%
-#   merge(sets, by.x="set_num", by.y="set_num") %>%
-#   filter(year <= 2023) %>%
-#   group_by(year) %>%
-#   summarize(mean_elements_per_part = mean(elements_per_part, na.rm=T)) %>%
-#   ggplot(aes(x = year, y = elements_count_per_part)) +
-#     geom_line(color="#00abff") +
-#     ggtitle("Średnia liczba elementów w części na przestrzeni lat") +
-#     labs(x = "Rok", y = "Średnia liczba elementów w części") +
-#     theme_bw() +
-#     theme(legend.position = "none") +
-#     easy_center_title() -> mean_elements_per_part_fig
+```{r trend_elementy_czesc, echo=T, cache=F}
+elements %>%
+  group_by(part_num, color_id) %>%
+  summarize(elem_per_part = n()) -> element_count
+
+inventory_parts %>%
+  rename(part_quantity = quantity) %>%
+  merge(parts, by.x="part_num", by.y="part_num") %>%
+  rename(part_name = name) %>%
+  merge(colors, by.x="color_id", by.y="id") %>%
+  rename(color_name = name) %>%
+  merge(part_categories, by.x="part_cat_id", by.y="id") %>%
+  rename(part_cat_name = name) %>%
+  merge(element_count, by = c("part_num", "color_id")) %>%
+  merge(inventories, by.x="inventory_id", by.y="id") %>%
+  merge(sets, by.x="set_num", by.y="set_num") %>%
+  filter(year <= 2023) %>%
+  group_by(year) %>%
+  summarize(mean_elements_per_part = mean(elem_per_part, na.rm=T)) -> mean_elements_count
+
+mean_elements_count %>%
+  ggplot(aes(x = year, y = mean_elements_per_part)) +
+    geom_line(color="#00abff") +
+    ggtitle("Średnia liczba elementów w jednej części na przestrzeni lat") +
+    labs(x = "Rok", y = "Średnia liczba elementów w jednej części") +
+    theme_bw() +
+    theme(legend.position = "none") +
+    easy_center_title() -> mean_elem_fig
+
+ggplotly(mean_elem_fig)
 ```
 
 # Korelacja między atrybutami
+
+Poniżej znajduje się wykres przedstawiający korelację pomiędzy poszczególnymi parametrami w zbiorze.
+
+```{r korelacja, echo=T, cache=F}
+unique_themes %>%
+  merge(mean_parts) %>%
+  merge(minifigs_trend) %>%
+  merge(trans_parts) %>%
+  merge(mean_elements_count) %>%
+  select(year, new_themes_count, set_mean_parts, sets_count, figures_count, mean_elements_per_part) -> dataset
+  
+correlation <- cor(dataset)
+ggcorrplot(correlation)
+kable(correlation)
+```
 
 # Predykcja dalszych cech zestawów LEGO
