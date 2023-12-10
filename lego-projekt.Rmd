@@ -41,7 +41,7 @@ Wnioski z raportu:
 - Z roku na rok w zestawach łącznie wykorzystywanych jest co raz więcej figurek [[rys1](#trend-figurki-zestawy)], co ma również związek ze stale rosnącą liczbą wydawanych zestawów [[rys2](#trend-zestawy)]
 - W ostatnich latach widać delikatny spadek średniej liczby elementów składających się na jedną część. [[rys](#trend-elementy-czesc)]
 - Istnieje trend związany z rosnącą średnią liczbą klocków w zestawie. Zestawy są co raz bardziej złożone. [[rys](#trend-czesci-zestaw)]
-- Liczba nowych tematyk (motywów) rośnie wraz z biegiem lat. [[rys](#trend-tematyki)]
+- Liczba unikalnych tematyk (motywów) rośnie wraz z biegiem lat. [[rys](#trend-tematyki)]
 
 
 # Wykorzystane biblioteki {#wykorzystane-biblioteki}
@@ -568,27 +568,27 @@ W tej sekcji dokonano analizy zmian związanych z LEGO, jakie zachodziły na prz
 
 ## Tematyki zestawów {#trend-tematyki}
 
-Poniżej znajduje się wykres pokazujący jak zmieniała się liczba nowych tematyk na przestrzeni lat (1949-2023).
+Poniżej znajduje się wykres pokazujący jak zmieniała się liczba unikalnych tematyk na przestrzeni lat (1949-2023).
 
-```{r trend_nowe_tematyki, echo=F, cache=F}
+```{r trend_unikalne_tematyki, echo=F, cache=F}
 themes %>%
   rename(theme_name = name) %>%
   merge(sets, by.x="id", by.y="theme_id") %>%
   filter(year <= 2023) %>%
   group_by(year) %>%
-  summarize(new_themes_count = n_distinct(theme_name, na.rm = T)) -> unique_themes
+  summarize(unique_themes_count = n_distinct(theme_name, na.rm = T)) -> unique_themes
 
 unique_themes %>%
-  ggplot(aes(x = year, y = new_themes_count)) +
+  ggplot(aes(x = year, y = unique_themes_count)) +
   geom_line(color="#00abff") +
   scale_y_continuous(labels = label_comma()) +
-  ggtitle("Nowe tematyki na przestrzeni lat") +
+  ggtitle("Unikalne tematyki na przestrzeni lat") +
   labs(x = "Rok", y = "Liczba tematyk") +
   theme_bw() +
   theme(legend.position = "none") +
-  easy_center_title() -> new_themes_trend_fig
+  easy_center_title() -> unique_themes_trend_fig
   
-ggplotly(new_themes_trend_fig)
+ggplotly(unique_themes_trend_fig)
 ```
 
 ## Części w zestawach {#trend-czesci-zestaw}
@@ -709,7 +709,7 @@ unique_themes %>%
   merge(minifigs_trend) %>%
   merge(trans_parts) %>%
   merge(mean_elements_count) %>%
-  select(year, new_themes_count, set_mean_parts, sets_count, figures_count, mean_elements_per_part) %>%
+  select(year, unique_themes_count, set_mean_parts, sets_count, figures_count, mean_elements_per_part) %>%
   distinct() -> dataset
   
 correlation <- cor(dataset)
