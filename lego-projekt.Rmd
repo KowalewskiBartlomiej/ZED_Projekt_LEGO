@@ -8,7 +8,6 @@ output:
     toc_float: yes
     theme: paper
     number_sections: yes
-    
 
 knit: (function(inputFile, encoding) { 
           rmarkdown::render(inputFile,
@@ -16,28 +15,33 @@ knit: (function(inputFile, encoding) {
                         output_file='index.html') })
 ---
 
+<style>
+body { 
+text-align: justify}
+</style>
+
 ```{r ustawienia, include=F}
 knitr::opts_chunk$set(echo=F, warning=F, message=F)
 ```
 
 # Podsumowanie analizy
 
-W raporcie poddany analizie został składający się z 12 tabel zbiór danych dotyczący LEGO, pochodzący z bazy Rebrickable. W [pierwszej sekcji](#wykorzystane-biblioteki) znajduje się kod odpowiedzialny za import wszystkich wykorzystanych w raporcie bibliotek oraz kod zapewniający powtarzalność rezultatów. [Kolejna sekcja](#wczytanie-danych) prezentuje kod odpowiedzialny za wczytanie danych. Następnym elementem raportu jest [opis zbioru danych](#opis-zbioru-danych), czyli krótki opis każdej tabeli i jej parametrów oraz wyświetlenie ich podstawowych statystyk i liczności. W kolejnej [sekcji](#analiza-danych) znajduje się analiza danych. Zawarte tam zostały wykresy i tabele podsumowujące dane dotyczące LEGO. W sekcji [Trendy](#trendy) przeanalizowano zmiany w LEGO na przestrzeni lat. Sekcja [Korelacja](#korelacja) zawiera analizę zależności pomiędzy wybranymi cechami zbioru. W sekcji [Klasyfikacja](#klasyfikacja) przygotowano model uczenia maszynowego próbujący przewidzieć średnią liczbę części na jeden zestaw. Wykorzystano do tego algorytm Random Forest z zastosowaniem walidacji krzyżowej. W ostatniej [sekcji](#predykcja-forecasting) zastosowano bibliotekę forecast (model Arima) w celu próby prognozy zmian wartości wybranych cech LEGO w następnych latach. 
+W raporcie analizie poddany został składający się z 12 tabel zbiór danych dotyczący LEGO, pochodzący z bazy Rebrickable. W [pierwszej sekcji](#wykorzystane-biblioteki) znajduje się kod odpowiedzialny za import wszystkich wykorzystanych w raporcie bibliotek. [Kolejna sekcja](#wczytanie-danych) zawiera kod odpowiedzialny za wczytanie danych. Następnym elementem raportu jest [opis zbioru danych](#opis-zbioru-danych), czyli krótki opis każdej tabeli i jej parametrów oraz wyświetlenie ich podstawowych statystyk i liczności tabeli. W kolejnej [sekcji](#analiza-danych) znajduje się analiza danych. Zawarte tam zostały wykresy i tabele podsumowujące dane dotyczące LEGO. W sekcji [Trendy](#trendy) przeanalizowano zachodzące zmiany dotyczące LEGO na przestrzeni lat. Sekcja [Korelacja](#korelacja) zawiera analizę zależności pomiędzy wybranymi cechami zbioru. W sekcji [Klasyfikacja](#klasyfikacja) przygotowano model uczenia maszynowego próbujący przewidzieć średnią liczbę części na jeden zestaw. Wykorzystano do tego algorytm Random Forest z zastosowaniem walidacji krzyżowej. W ostatniej [sekcji](#predykcja-forecasting) zastosowano bibliotekę forecast (model Arima) w celu próby prognozy zmian wartości wybranych cech LEGO w następnych latach. 
 
-Najważniejsze wnioski wynikające z całego raportu:
+Wnioski z raportu:
 
-- Z roku na rok w zestawach łącznie wykorzystywanych jest co raz więcej figurek [[rys1](#trend-figurki-zestawy)], co ma również związek ze stale rosnącą liczbą wydawanych zestawów [[rys2](#trend-zestawy)]
-- W ostatnich latach widać spadek średniej liczby elementów wchodzących w skład jednej części, jednak wartość ta w dalszym ciągu oscyluje wokół 1,6 elementu na część. [[rys](#trend-elementy-czesc)]
-- Istnieje trend związany z rosnącą średnią liczbą części w zestawie. [[rys](#trend-czesci-zestaw)]
-- Liczba nowych tematyk (motywów) rośnie wraz z biegiem lat. [[rys](#trend-tematyki)]
 - Prawie wszystkie (około 98,9%) części LEGO wykonane są z plastiku. Następnym materiałem wykorzystywanym przy produkcji LEGO jest guma (około 0,71%). [[rys](#rozkład-materiałów)]
-- Najczęściej występującą figurką LEGO jest figurka szkieletu. [[rys](#najpopularniejsze-figurki)]
+- Najczęściej występującą figurką LEGO jest figurka szkieletu. Innymi popularnymi figurkami są te związane z zawodami, sagą Star Wars czy grą Minecraft. [[rys](#najpopularniejsze-figurki)]
 - Najbardziej popularnymi tematykami zestawów są: Books, Star Wars i Technic. [[rys](#najpopularniejsze-tematyki)]
 - Największym zestawem jest zestaw "World Map" składający się z blisko 12 tysięcy części. [[rys](#największe-zestawy)]
-- Najpopularniejsze kolory części LEGO to czarny i biały. [[rys](#najpopularniejsze-kolory)]
-- Uniwersalne części są najpopularniejsze. [[rys1](#najpopularniejsze-czesci)] [[rys2](#najpopularniejsze-kategorie-czesci)]
-- Zdecydowana większość części jest nieprzezroczysta. [[rys](#przezroczystosc-czesci)]
-- Najbardziej złożoną tematyką jest "Collectable Minifgures". [[rys](#najbardziej-zlozone-motywy)]
+- Najpopularniejsze kolory klocków LEGO to czarny i biały. [[rys](#najpopularniejsze-kolory)]
+- Uniwersalne klocki są najpopularniejsze. [[rys](#najpopularniejsze-czesci)]
+- Większość klocków jest nieprzezroczysta. [[rys](#przezroczystosc-czesci)]
+- Najbardziej złożoną tematyką jest "Collectable Minifgures". Składa się ona z największej liczby "podmotywów". [[rys](#najbardziej-zlozone-motywy)]
+- Z roku na rok w zestawach łącznie wykorzystywanych jest co raz więcej figurek [[rys1](#trend-figurki-zestawy)], co ma również związek ze stale rosnącą liczbą wydawanych zestawów [[rys2](#trend-zestawy)]
+- W ostatnich latach widać delikatny spadek średniej liczby elementów składających się na jedną część. [[rys](#trend-elementy-czesc)]
+- Istnieje trend związany z rosnącą średnią liczbą klocków w zestawie. Zestawy są co raz bardziej złożone. [[rys](#trend-czesci-zestaw)]
+- Liczba nowych tematyk (motywów) rośnie wraz z biegiem lat. [[rys](#trend-tematyki)]
 
 
 # Wykorzystane biblioteki {#wykorzystane-biblioteki}
@@ -86,7 +90,11 @@ themes <- read.csv("rebrickable/themes.csv")
 
 # Opis zbioru danych
 
-Cały zbiór danych dotyczący klocków LEGO składa się z 12 tabel. Poniżej znajdują się sekcje zawierające opisy każdej z nich, wyświetlające informacje o ich rozmiarze oraz podstawowe statystyki.
+Cały zbiór danych dotyczący klocków LEGO składa się z 12 tabel. Na obrazku poniżej przedstawiono ich schemat.
+
+<img src="rebrickable/rebrickable_schema_v3.png"/>
+
+Poniżej znajdują się sekcje zawierające opisy każdej z tabel, informacje o ich rozmiarze oraz podstawowe statystyki.
 
 ## Inventories
 
@@ -303,7 +311,7 @@ skim(themes)
 
 # Analiza danych {#analiza-danych}
 
-W tej sekcji dokonano analizy wczytanych danych w celu wykrycia ciekawych zależności oraz znalezienia pojawiających się na przestrzeni lat trendów dotyczących klocków LEGO.
+W tej sekcji dokonano analizy zbioru danych dotyczących LEGO.
 
 ## Najczęściej występujące figurki w zestawach {#najpopularniejsze-figurki}
 
@@ -329,7 +337,7 @@ inventory_minifigs %>%
 ggplotly(pop_fig)
 ```
 
-Z wykresu wynika, że najbardziej popularną figurką jest figurka szkieletu, która występuje w 43 zestawach.
+Z wykresu można odczytać, że najbardziej popularną figurką jest figurka szkieletu, która występuje w 43 zestawach.
 
 ## Rozkład materiałów, z których wykonano części {#rozkład-materiałów}
 
@@ -380,11 +388,11 @@ themes %>%
 ggplotly(pop_themes)
 ```
 
-Z powyższego wykresu wynika, że najpopularniejszą tematyką (motywem) są Books, gdyż w tej kategorii są 973 zestawy.
+Z powyższego wykresu wynika, że najpopularniejsza tematyka (motywem) to "Books", gdyż w tej kategorii są 973 zestawy.
 
 ## Największe zestawy {#największe-zestawy}
 
-Następna analiza dotyczy wielkości zestawów w zbiorze danych. Poniżej znajduje się wykres i tabela prezentująca 10 najbardziej złożonych zestawów LEGO ze zbioru Rebrickable.
+Następna analiza dotyczy wielkości zestawów. Poniżej znajduje się wykres i tabela prezentująca 10 najbardziej złożonych zestawów LEGO ze zbioru Rebrickable.
 
 ```{r najwieksze_zestawy, echo=F, cache=F}
 sets %>%
@@ -423,7 +431,7 @@ colors %>%
   arrange(desc(color_count)) %>%
   mutate(rgb = paste0("#",rgb)) %>%
   head(10) %>%
-  ggplot(aes(x = reorder(color_name, color_count), y = color_count, fill=rgb, color="black")) + 
+  ggplot(aes(x = reorder(color_name, color_count), y = color_count, fill=rgb)) + 
            geom_bar(stat="identity") +
            coord_flip() + 
            scale_fill_identity() +
@@ -518,7 +526,7 @@ trans_parts %>%
   geom_bar(stat="identity", position="identity", fill="#00abff") +
   scale_y_continuous(labels = label_comma()) +
   ggtitle("Transparentność części") +
-  labs(x = "Czy część jest transparentna?", y = "Liczba części") +
+  labs(x = "Czy część jest przezroczysta?", y = "Liczba części") +
   theme_bw() +
   easy_center_title() -> trans_parts_fig
   
@@ -528,7 +536,7 @@ trans_parts %>%
   kable(col.names = c("Transparentność", "Liczba części", "[%]"), align = "c")
 ```
 
-Na podstawie wykresu i tabeli można stwierdzić, że zdecydowana większość (94%) części jest nieprzezroczysta.
+Na podstawie wykresu i tabeli można stwierdzić, że zdecydowana większość (94%) części posiada kolor (jest nieprzezroczysta).
 
 ## Najbardziej złożone tematyki (motywy) {#najbardziej-zlozone-motywy}
 
@@ -573,6 +581,7 @@ themes %>%
 unique_themes %>%
   ggplot(aes(x = year, y = new_themes_count)) +
   geom_line(color="#00abff") +
+  scale_y_continuous(labels = label_comma()) +
   ggtitle("Nowe tematyki na przestrzeni lat") +
   labs(x = "Rok", y = "Liczba tematyk") +
   theme_bw() +
@@ -595,6 +604,7 @@ sets %>%
 mean_parts %>%
   ggplot(aes(x = year, y = set_mean_parts)) +
   geom_line(color="#00abff") +
+  scale_y_continuous(labels = label_comma()) +
   ggtitle("Średnia liczba części w zestawach na przestrzeni lat") +
   labs(x = "Rok", y = "Średnia liczba części") +
   theme_bw() +
@@ -621,6 +631,7 @@ minifigs %>%
 minifigs_trend %>%
   ggplot(aes(x = year, y = figures_count)) +
   geom_line(color="#00abff") +
+  scale_y_continuous(labels = label_comma()) +
   ggtitle("Łączna liczba figurek wykorzystanych w zestawach w latach 1975-2023") +
   labs(x = "Rok", y = "Liczba figurek") +
   theme_bw() +
@@ -641,6 +652,7 @@ sets %>%
   summarize(sets_count = n()) %>%
   ggplot(aes(x = year, y = sets_count)) +
   geom_line(color="#00abff") +
+  scale_y_continuous(labels = label_comma()) +
   ggtitle("Liczba wydanych zestawów na przestrzeni lat") +
   labs(x = "Rok", y = "Liczba zestawów") +
   theme_bw() +
@@ -677,6 +689,7 @@ inventory_parts %>%
 mean_elements_count %>%
   ggplot(aes(x = year, y = mean_elements_per_part)) +
     geom_line(color="#00abff") +
+    scale_y_continuous(labels = label_comma()) +
     ggtitle("Średnia liczba elementów w jednej części na przestrzeni lat") +
     labs(x = "Rok", y = "Średnia liczba elementów w jednej części") +
     theme_bw() +
@@ -701,9 +714,16 @@ unique_themes %>%
   
 correlation <- cor(dataset)
 ggcorrplot(correlation)
-kable(dataset)
+#kable(dataset)
 kable(correlation)
 ```
+
+Z powyższej tabeli wynika, że najwyższe wartości współczynnika korelacji wiążą rok z:
+
+- liczbą nowych zestawów
+- średnią liczbą klocków w zestawie
+- liczbą wykorzystanych figurek
+- liczbą unikalnych tematyk
 
 # Predykcja - klasyfikacja {#klasyfikacja}
 
@@ -737,6 +757,7 @@ data_to_compare$Predictions <- rfPredict
 ggplot(data_to_compare, aes(x = year)) +
   geom_line(aes(y = set_mean_parts, color = "Rzeczywista liczba części"), size = 1) +
   geom_line(aes(y = Predictions, color = "Przewidywana liczba części"), size = 1) +
+  scale_y_continuous(labels = label_comma()) +
   labs(x = "Rok", y = "Liczba części") +
   scale_color_manual(name = "Legenda", values = c("Rzeczywista liczba części" = "#00abff", "Przewidywana liczba części" = "red")) +
   theme_bw() -> ml_plot
@@ -746,9 +767,9 @@ ggplotly(ml_plot)
 
 # Predykcja - forecasting {#predykcja-forecasting}
 
-Analizując podany zbiór danych podjęto również próbę predykcji wartości niektórych cech LEGO w przyszłych latach. Wykorzystano w tym celu bibliotekę **forecast** (model Arima).
+Analizując podany zbiór danych podjęto również próbę predykcji wartości wybranych cech LEGO w przyszłych 15 latach. Wykorzystano w tym celu bibliotekę **forecast** (model Arima).
 
-```{r predykcja_forecasting, echo=T, cache=F}
+```{r predykcja_forecasting, echo=F, cache=F}
 dataset_ts <- ts(dataset[, c(2,4,5)], start=1975, frequency=1)
 arima_models <- vector("list", length = ncol(dataset_ts))
 
@@ -763,7 +784,7 @@ generate_forecasts <- function(model, h = 15) {
 forecasts <- lapply(arima_models, generate_forecasts)
 
 for (i in seq_along(forecasts)) {
-  cat("\nPredykcja dla", colnames(dataset_ts)[i], ":\n")
+  cat("Predykcja dla", colnames(dataset_ts)[i], ":\n")
   print(forecasts[[i]]) 
   plot(forecasts[[i]], 
     main=paste0("Predykcja dla cechy ", colnames(dataset_ts)[i]),
